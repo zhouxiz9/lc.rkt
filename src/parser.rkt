@@ -8,6 +8,7 @@
 
 (provide
  parse
+ make-application
  application?
  abstraction?
  identifier?
@@ -62,14 +63,14 @@
 (define (parse-app-plus tokens)
   (letrec ((parse (lambda (tokens)
                     (if (null? tokens) (list (list '()))
-                     (let-values ([(atom after-parse-atom) (parse-atom tokens)])
-                       (if after-parse-atom
-                           (append (list (list "atom" atom)) (parse after-parse-atom))
-                           (list (list #f atom))))))))
+                        (let-values ([(atom after-parse-atom) (parse-atom tokens)])
+                          (if after-parse-atom
+                              (append (list (list "atom" atom)) (parse after-parse-atom))
+                              (list (list #f atom))))))))
     (let* ((result (parse tokens))
            (atom-pairs (filter (lambda (e) (equal? (first e) "atom")) result))
            (atoms (map (lambda (a) (second a)) atom-pairs))
-          (rest-tokens (filter (lambda (e) (equal? (first e) #f)) result)))
+           (rest-tokens (filter (lambda (e) (equal? (first e) #f)) result)))
       (if (null? atoms)
           (values '() #f)
           (if (null? rest-tokens)
