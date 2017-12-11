@@ -6,6 +6,17 @@
 
 ;; parser
 
+(provide
+ parse
+ application?
+ abstraction?
+ identifier?
+ application-lhs
+ application-rhs
+ abstraction-param
+ abstraction-body
+ identifier-value)
+
 
 (define-struct abstraction (param body))
 
@@ -28,7 +39,7 @@
                 (if success
                     (let-values ([(term after-parse-term) (parse-term rest-tokens)])
                       (if after-parse-term
-                          (values (make-abstraction lcid term) after-parse-term)
+                          (values (make-abstraction (make-identifier lcid) term) after-parse-term)
                           (values rest-tokens #f)))
                     (values after-match-lcid #f)))
               (values tokens #f)))
@@ -47,19 +58,24 @@
               (values atom after-parse-atom)))
         (values tokens #f))))
 
-(define (parse-app-plus tokens)
-  (letrec ((parse  (lambda (tokens)
-                     (if (null? tokens) '()
-                         (let-values ([(atom after-parse-atom) (parse-atom tokens)])
-                           (if after-parse-atom
-                               (cons atom (parse after-parse-atom))
-                               #f))))))
-    (let ((results (parse tokens)))
-      (if (or (not results) (any false? results))
-          (values tokens #f)
-          (values results #t)))))
 
-            
+(define (parse-app-plus tokens)
+  (letrec ((parse (lambda (tokens)
+                    (if (null? tokens) (list (list '()))
+                     (let-values ([(atom after-parse-atom) (parse-atom tokens)])
+                       (if after-parse-atom
+                           (append (list (list "atom" atom)) (parse after-parse-atom))
+                           (list (list #f atom))))))))
+    (let* ((result (parse tokens))
+           (atom-pairs (filter (lambda (e) (equal? (first e) "atom")) result))
+           (atoms (map (lambda (a) (second a)) atom-pairs))
+          (rest-tokens (filter (lambda (e) (equal? (first e) #f)) result)))
+      (if (null? atoms)
+          (values '() #f)
+          (if (null? rest-tokens)
+              (values atoms rest-tokens)
+              (values atoms (second (car rest-tokens))))))))
+
 
 (define (parse-atom tokens)
   (if (token-type=? (first tokens) LCID)
