@@ -1,2 +1,2 @@
 # lc.rkt
-A λ-calculus interpreter written in Racket
+A lambda-calculus interpreter written in Racket
