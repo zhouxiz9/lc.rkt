@@ -9,6 +9,8 @@
 (provide
  parse
  make-application
+ make-abstraction
+ make-identifier
  application?
  abstraction?
  identifier?
