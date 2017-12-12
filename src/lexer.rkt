@@ -25,7 +25,7 @@
                                [")" 
                                 (list* (make-token RPAREN current-char) (lex (substring str 1)))]
                                [(pregexp #px"[a-z]")
-                                (let ((identifier (regexp-match #px"[a-z]+[a-zA-Z]*\\b" str)))
+                                (let ((identifier (regexp-match #px"[a-z]+[a-zA-Z0-9]*\\b" str)))
                                   (if identifier
                                       (list* (make-token LCID (car identifier)) (lex (substring str (string-length (car identifier)))))
                                       (error "Wrong variable name")))]
