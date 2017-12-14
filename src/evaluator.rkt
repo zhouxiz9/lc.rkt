@@ -85,6 +85,22 @@
         (else e)))
 
 
+(define (reducible? node)
+  (cond ((identifier? node) #f)
+        ((abstraction? node) (reducible? (abstraction-body node)))
+        ((application? node) #t)
+        (else (error "Unknown ast node type"))))
+
+
+(define (complete-reduce ast)
+  (if (reducible? ast)
+      (let ((result (reduce ast)))
+        (if (equal? (ans ast) (ans result))
+            (display "infinite reduction")
+            (complete-reduce result)))
+      ast))
+  
+
 (define (get-ids ast)
   (cond ((application? ast)
          (append (get-ids (application-lhs ast))
