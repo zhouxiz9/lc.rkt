@@ -27,7 +27,8 @@
                                [(pregexp #px"[a-z]")
                                 (let ((identifier (regexp-match #px"[a-z]+[a-zA-Z0-9]*\\b" str)))
                                   (if identifier
-                                      (list* (make-token LCID (car identifier)) (lex (substring str (string-length (car identifier)))))
+                                      (let ((id (car identifier)))
+                                        (list* (make-token (if (equal? id "lambda") LAMBDA LCID) id) (lex (substring str (string-length id)))))     
                                       (error "Wrong variable name")))]
                                [_ (display str)])))
                           (else '())))))
