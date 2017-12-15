@@ -9,7 +9,8 @@
  LAMBDA
  LPAREN
  RPAREN
- DOT)
+ DOT
+ CONSTANT)
 
 ;; Token
 
@@ -20,6 +21,7 @@
 (define LPAREN "LPAREN")
 (define RPAREN "RPAREN")
 (define DOT "DOT")
+(define CONSTANT "CONSTANT")
 
 
 (define (token-type=? token type)

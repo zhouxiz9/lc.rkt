@@ -24,6 +24,11 @@
                                 (list* (make-token LPAREN current-char) (lex (substring str 1)))]
                                [")" 
                                 (list* (make-token RPAREN current-char) (lex (substring str 1)))]
+                               [(pregexp #px"[0-9]")
+                                (let ((constant (regexp-match #px"[0-9]+[0-9]*\\b" str)))
+                                  (if constant
+                                      (list* (make-token CONSTANT (string->number (car constant))) (lex (substring str (string-length (car constant)))))
+                                      (error "Wrong constant")))]
                                [(pregexp #px"[a-z]")
                                 (let ((identifier (regexp-match #px"[a-z]+[a-zA-Z0-9]*\\b" str)))
                                   (if identifier
